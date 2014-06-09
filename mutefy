@@ -1,0 +1,65 @@
+#!/bin/bash
+####################################################################
+# This script was created by: MDK - mdk@thecoreme.org              #
+# http://projects.thecoreme.org/                                   #
+# May 28 2014                                                      #
+# Last update on Jun 09 2014                                       #
+#                                                                  #
+# Simple script/wrapper to "mute" Spotify's ads                    #
+# based on https://gist.github.com/pcworld/3198763#comment-1233334 #
+#                                                                  #
+# Depends on: Spotfy (obviously), libnotify and Alsa               #
+#                                                                  #
+####################################################################
+
+# run spotify and wait 15 seconds
+spotify&
+sleep 15
+
+# general configuration
+WMTITLE="Spotify - Linux Preview"
+ADMUTE=0
+PAUSED=0
+NOTIFYICON="/opt/spotify/spotify-client/Icons/spotify-linux-128.png"
+
+# die ads!
+xprop -spy -name "$WMTITLE" WM_ICON_NAME |
+while read -r XPROPOUTPUT; do
+    XPROP_TRACKDATA="$(echo "$XPROPOUTPUT" | cut -d \" -f 2 )"
+    DBUS_TRACKDATA="$(dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify / \
+    org.freedesktop.MediaPlayer2.GetMetadata | grep xesam:title -A 1 | grep variant | cut -d \" -f 2)"
+
+    echo "XPROP:    $XPROP_TRACKDATA"
+    echo "DBUS:     $DBUS_TRACKDATA"
+
+    if [[ "$XPROP_TRACKDATA" = "Spotify" ]]
+      then
+          echo "--PAUSED--"
+          PAUSED="1"
+      else
+          PAUSED=0
+          echo "--NOTPAUSED--"
+    fi
+
+    if [[ "$PAUSED" = "1" || "$XPROP_TRACKDATA" =~ "$DBUS_TRACKDATA" ]]
+      then
+          echo "--NOAD--"
+          if [[ "$ADMUTE" = "1" ]]
+            then
+                sleep 0.5
+                amixer set Master unmute
+          fi
+          ADMUTE=0
+      else
+          echo "--AD--"
+          if [[ "$ADMUTE" != "1" ]]
+            then
+                notify-send "Spotify" -i $NOTIFYICON "Muting ad ;)" -t 500
+                amixer set Master mute
+          fi
+          ADMUTE=1
+    fi
+done
+
+echo "Spotify not active. Exiting."
+exit
