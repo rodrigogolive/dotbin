@@ -1,0 +1,69 @@
+#!/bin/bash
+################################################################
+# This script was created by: MDK - mdk@thecoreme.org          #
+# http://projects.thecoreme.org/                               #
+# Feb 21 2013                                                  #
+# Last update on Nov 06 2015                                   #
+#                                                              #
+# Simple script to replace white space on files name           #
+################################################################
+
+function print_usage(){
+    echo "Usage: renamer [options]"
+    echo "Where options can be:"
+    echo "-l | --lower  Rename changing all characters to lower case"
+    echo "-u | --upper  Rename changing all characters to upper case"
+    echo "-h | --help   This screen :)"
+    echo
+}
+
+lower=0
+upper=0
+
+while [ $# -gt 0  ]
+do
+    case $1 in
+        -l | --lower)
+            lower=1
+            shift 1
+            ;;
+        -u | --upper)
+            upper=1
+            shift 1
+            ;;
+        -h | --help)
+            print_usage
+            shift 1
+            exit 0
+            ;;
+        *)
+            echo "Invalid argument $1"
+            print_usage
+            shift 1
+            exit 1
+            ;;
+    esac
+done
+
+for each in *
+do
+    # substitute a white space for '_'
+    # substitute '(' for '--'
+    # remove ')'
+    new=$(echo $each | sed s/" "/"."/g | sed s/"("/""/g | sed s/")"/""/g)
+
+    if [ $lower = 1 ]
+    then
+        new_name=$(echo $new | tr "[:upper:]" "[:lower:]")
+    elif [ $upper = 1 ]
+    then
+        new_name=$(echo $new | tr "[:lower:]" "[:upper:]")
+    else
+        new_name=$new
+    fi
+
+    mv -n -T "$each" $new_name &> /dev/null
+done
+
+echo "Renaming done, your result:"
+ls --color
