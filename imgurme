@@ -1,0 +1,90 @@
+#!/usr/bin/env python
+
+# import urllib2
+import sys
+import os
+import re
+
+from urllib2 import urlopen
+from HTMLParser import HTMLParser
+
+
+class ImgUrParser(HTMLParser):
+
+    def __init__(self):
+        # disclaimer: HTMLParser is old style class, do not support 'super'
+        # initialization style :/
+        HTMLParser.__init__(self)
+
+        self._images = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "a":
+            for attr, value in attrs:
+                # XXX regex to get jpg files
+                if attr == "href" and value.endswith(".jpg"):
+
+                    self._images.append("https:%s" % value)
+
+    def images(self):
+        return self._images
+
+if __name__ == '__main__':
+    # if len(sys.argv) < 2:
+        # print "Uh, maybe try to pass a file to parse?"
+        # sys.exit(1)
+
+    # f = open(sys.argv[1], 'r')
+    # html = f.read()
+    # f.close()
+
+    # html = html.decode('utf-8')
+
+    # f = open("OUT", 'w')
+    # TODO
+    url = "https://imgur.com/gallery/SwhjO"
+    # TODO accept a single image as well?
+
+    # TODO exceptions, move to parser
+    print "Parsing %s" % url
+
+    f = urlopen(url)
+    html = f.read()
+    f.close()
+
+    parser = ImgUrParser()
+    html = parser.unescape(html)
+    parser.feed(html)
+
+    num_images = len(parser.images())
+    print "    Found %s images" % num_images
+
+    # TODO create a simple downloader class
+    download_path = os.getcwd()
+    dir_name = url.split('/')[-1]
+    download_path =  os.path.join(download_path, dir_name)
+
+    if num_images > 0:
+        if not os.path.exists(dir_name):
+            print "Creating %s/" % dir_name
+            os.mkdir(dir_name)
+
+        print "Downloading images to %s/" % download_path
+
+        images = parser.images()
+        for index, image in enumerate(images):
+            image_file = image.split('/')[-1]
+
+            print "    (%s/%s) %s..." % (index + 1, num_images, image_file)
+
+            image_file = os.path.join(download_path, image_file)
+            if os.path.isfile(image_file):
+                print "        File already exists, skipping..."
+                continue
+
+            try:
+                f = open(image_file, 'wb')
+                f.write(urlopen(image).read())
+                f.close()
+            except Exception as e:
+                print e
