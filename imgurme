@@ -29,23 +29,52 @@ class ImgUrParser(HTMLParser):
     def images(self):
         return self._images
 
+
+class Downloader():
+
+    def __init__(self, path, name):
+        self._path = path
+        self._name = name
+
+        self._download_path =  os.path.join(path, dir_name)
+
+    def download(self, images=[]):
+        if not images:
+            return
+
+        num_images = len(images)
+
+        if not os.path.exists(self._download_path):
+            print "Creating %s/ on %s" % (self._name, self._path)
+            os.mkdir(self._download_path)
+
+        print "Downloading images to %s/" % self._download_path
+
+        for index, image in enumerate(images):
+            image_file = image.split('/')[-1]
+
+            print "    (%s/%s) %s..." % (index + 1, num_images, image_file)
+
+            image_file = os.path.join(self._download_path, image_file)
+            if os.path.isfile(image_file):
+                print "        File already exists, skipping..."
+                continue
+
+            try:
+                f = open(image_file, 'wb')
+                f.write(urlopen(image).read())
+                f.close()
+            except Exception as e:
+                print e
+
+
 if __name__ == '__main__':
-    # if len(sys.argv) < 2:
-        # print "Uh, maybe try to pass a file to parse?"
-        # sys.exit(1)
-
-    # f = open(sys.argv[1], 'r')
-    # html = f.read()
-    # f.close()
-
-    # html = html.decode('utf-8')
-
-    # f = open("OUT", 'w')
     # TODO
     url = "https://imgur.com/gallery/SwhjO"
     # TODO accept a single image as well?
 
     # TODO exceptions, move to parser
+    # -- parser
     print "Parsing %s" % url
 
     f = urlopen(url)
@@ -58,33 +87,12 @@ if __name__ == '__main__':
 
     num_images = len(parser.images())
     print "    Found %s images" % num_images
+    # -- parser
 
-    # TODO create a simple downloader class
-    download_path = os.getcwd()
+    # -- downloader
+    download_path = os.getcwd() # XXX set a default one
     dir_name = url.split('/')[-1]
-    download_path =  os.path.join(download_path, dir_name)
 
-    if num_images > 0:
-        if not os.path.exists(dir_name):
-            print "Creating %s/" % dir_name
-            os.mkdir(dir_name)
-
-        print "Downloading images to %s/" % download_path
-
-        images = parser.images()
-        for index, image in enumerate(images):
-            image_file = image.split('/')[-1]
-
-            print "    (%s/%s) %s..." % (index + 1, num_images, image_file)
-
-            image_file = os.path.join(download_path, image_file)
-            if os.path.isfile(image_file):
-                print "        File already exists, skipping..."
-                continue
-
-            try:
-                f = open(image_file, 'wb')
-                f.write(urlopen(image).read())
-                f.close()
-            except Exception as e:
-                print e
+    downloader = Downloader(download_path, dir_name)
+    downloader.download(parser.images())
+    # -- downloader
