@@ -1,8 +1,17 @@
 #!/usr/bin/env python
-"""Parse and download images from an ImgUr gallery."""
+"""Parse and download images from an ImgUr gallery.
 
-# the gallery that inspired me to create this script:
-# https://imgur.com/gallery/SwhjO
+The creation of this script was inspired by Methos25's rice [1]. I loved the
+wallpaper he was using, and looking on the ImgUr gallery [2] he told us he got
+the image, I had the idea to create a script to download all images from there
+and randomly pick one to set as wallpaper.
+
+Well, this script do the first part, following the KISS philosophy. The second
+part will be done later on.
+
+[1] https://www.reddit.com/r/unixporn/comments/4mtww2/i3gaps_a_little_materialistic/  # noqa
+[2] https://imgur.com/gallery/SwhjO
+"""
 
 import os
 import re
