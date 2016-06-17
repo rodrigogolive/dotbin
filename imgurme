@@ -3,7 +3,6 @@
 # the gallery that inspired me to create this script:
 # https://imgur.com/gallery/SwhjO
 
-import sys
 import os
 import re
 
@@ -34,8 +33,8 @@ class Arguments():
 
         args = parser.parse_args()
 
-        self.url = args.url[0]
-        self.path = os.getcwd() if args.path == None else args.path
+        self.url = args.url[0].strip()
+        self.path = os.getcwd() if args.path is None else args.path.strip()
 
 
 class ImgUrParser(HTMLParser):
@@ -47,7 +46,18 @@ class ImgUrParser(HTMLParser):
 
         self._images = []
 
+    def _validate_url(self, url):
+        regex = ur'http[s]?://(?:w{3}\.)?imgur.com/(?:[a-zA-Z]|[0-9]|[$-_@.&+]\
+                |[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))*'
+
+        return re.match(regex, url)
+
     def parse(self, url):
+        # check if url is a valid ImgUr address
+        if not self._validate_url(url):
+            print "URL '%s' doesn't seems to be a valid ImgUr address" % url
+            return
+
         print "Parsing %s" % url
 
         try:
@@ -58,8 +68,17 @@ class ImgUrParser(HTMLParser):
             print ">> Error; is it a valid URL? (%s)" % e
             return
 
-        html = self.unescape(html)
-        self.feed(html)
+        try:
+            html = self.unescape(html)
+        except Exception as e:
+            print ">> Error: %s" % e
+            return
+
+        try:
+            self.feed(html)
+        except Exception as e:
+            print ">> Error: %s" % e
+            return
 
         print "    Found %s images" % len(self._images)
 
@@ -78,10 +97,10 @@ class ImgUrParser(HTMLParser):
 class Downloader():
 
     def __init__(self, path, name):
-        self._path = path
+        self._path = path if path != str() else "./"
         self._name = name
 
-        self._download_path =  os.path.join(path, dir_name)
+        self._download_path = os.path.join(path, dir_name)
 
     def download(self, images=[]):
         if not images:
@@ -89,10 +108,17 @@ class Downloader():
 
         num_images = len(images)
 
+        if not os.path.exists(self._path):
+            print "> Path '%s' doesn't exist" % self._path
+            return
+
         if not os.path.exists(self._download_path):
             print "Creating %s/ on %s" % (self._name, self._path)
-            # TODO exception (no such dir)
-            os.mkdir(self._download_path)
+            try:
+                os.mkdir(self._download_path)
+            except Exception as e:
+                print ">> Error: %s" % e
+                return
 
         print "Downloading images to %s/" % self._download_path
 
@@ -111,7 +137,7 @@ class Downloader():
                 f.write(urlopen(image).read())
                 f.close()
             except Exception as e:
-                print ">> Error (%s)" % e
+                print ">> Error: %s" % e
                 return
 
 
