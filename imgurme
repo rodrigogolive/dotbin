@@ -52,6 +52,11 @@ class ImgUrParser(HTMLParser):
 
         return re.match(regex, url)
 
+    def _validate_image(self, image):
+        regex = ur'.*(?:.png|.jpg)$'
+
+        return re.match(regex, image)
+
     def parse(self, url):
         # check if url is a valid ImgUr address
         if not self._validate_url(url):
@@ -85,10 +90,8 @@ class ImgUrParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         if tag == "a":
             for attr, value in attrs:
-                # XXX regex to get jpg files
-                if attr == "href" and value.endswith(".jpg"):
-
-                    self._images.append("https:%s" % value)
+                if attr == "href" and self._validate_image(value):
+                    self._images.append("https:%s" % value) # TODO get http/https from url
 
     def images(self):
         return self._images
