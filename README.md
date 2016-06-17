@@ -8,7 +8,8 @@ Here I keep scripts and utils that live on my *~/.bin* directory. They are curre
 scripts
 --------
 * **mutefy**: Old script to mute ads on Spotify (when using Alsa). I don't use it anymore, so maybe it isn't working right now;
-* **renamer**: Rename all files where invoked, removing whitespaces (and some other trash), in order to ease file handling on command line. Also, the new file name can have all characters in upper or lower case.
+* **renamer**: Rename all files where invoked, removing whitespaces (and some other trash), in order to ease file handling on command line. Also, the new file name can have all characters in upper or lower case;
+* **imgurme**: Parse and download images from an ImgUr gallery url.
 
 dotfiles
 --------
