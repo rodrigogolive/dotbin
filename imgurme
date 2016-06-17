@@ -1,11 +1,41 @@
 #!/usr/bin/env python
 
+# the gallery that inspired me to create this script:
+# https://imgur.com/gallery/SwhjO
+
 import sys
 import os
 import re
 
 from urllib2 import urlopen
 from HTMLParser import HTMLParser
+from argparse import ArgumentParser
+
+
+class Arguments():
+    url = None
+    path = None
+
+    def __init__(self):
+        self._parse_args()
+
+    def _parse_args(self):
+        parser = ArgumentParser()
+
+        parser.add_argument("url",
+                            type=str,
+                            metavar='N',
+                            nargs=1,
+                            help="ImgUr gallery URL")
+        parser.add_argument("--path",
+                            "-p",
+                            type=str,
+                            help="Path to save images (default: current)")
+
+        args = parser.parse_args()
+
+        self.url = args.url[0]
+        self.path = os.getcwd() if args.path == None else args.path
 
 
 class ImgUrParser(HTMLParser):
@@ -25,7 +55,8 @@ class ImgUrParser(HTMLParser):
             html = f.read()
             f.close()
         except Exception as e:
-            print e
+            print ">> Error; is it a valid URL? (%s)" % e
+            return
 
         html = self.unescape(html)
         self.feed(html)
@@ -60,6 +91,7 @@ class Downloader():
 
         if not os.path.exists(self._download_path):
             print "Creating %s/ on %s" % (self._name, self._path)
+            # TODO exception (no such dir)
             os.mkdir(self._download_path)
 
         print "Downloading images to %s/" % self._download_path
@@ -79,19 +111,19 @@ class Downloader():
                 f.write(urlopen(image).read())
                 f.close()
             except Exception as e:
-                print e
+                print ">> Error (%s)" % e
+                return
 
 
 if __name__ == '__main__':
-    # TODO from command line
-    url = "https://imgur.com/gallery/SwhjO"
-    # TODO accept a single image as well?
+    arguments = Arguments()
+
+    url = arguments.url
 
     parser = ImgUrParser()
     parser.parse(url)
 
-    download_path = os.getcwd() # TODO set a default path (/tmp?)
     dir_name = url.split('/')[-1]
 
-    downloader = Downloader(download_path, dir_name)
+    downloader = Downloader(arguments.path, dir_name)
     downloader.download(parser.images())
