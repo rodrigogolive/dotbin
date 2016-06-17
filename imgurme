@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-# import urllib2
 import sys
 import os
 import re
@@ -17,6 +16,21 @@ class ImgUrParser(HTMLParser):
         HTMLParser.__init__(self)
 
         self._images = []
+
+    def parse(self, url):
+        print "Parsing %s" % url
+
+        try:
+            f = urlopen(url)
+            html = f.read()
+            f.close()
+        except Exception as e:
+            print e
+
+        html = self.unescape(html)
+        self.feed(html)
+
+        print "    Found %s images" % len(self._images)
 
     def handle_starttag(self, tag, attrs):
         if tag == "a":
@@ -69,30 +83,15 @@ class Downloader():
 
 
 if __name__ == '__main__':
-    # TODO
+    # TODO from command line
     url = "https://imgur.com/gallery/SwhjO"
     # TODO accept a single image as well?
 
-    # TODO exceptions, move to parser
-    # -- parser
-    print "Parsing %s" % url
-
-    f = urlopen(url)
-    html = f.read()
-    f.close()
-
     parser = ImgUrParser()
-    html = parser.unescape(html)
-    parser.feed(html)
+    parser.parse(url)
 
-    num_images = len(parser.images())
-    print "    Found %s images" % num_images
-    # -- parser
-
-    # -- downloader
-    download_path = os.getcwd() # XXX set a default one
+    download_path = os.getcwd() # TODO set a default path (/tmp?)
     dir_name = url.split('/')[-1]
 
     downloader = Downloader(download_path, dir_name)
     downloader.download(parser.images())
-    # -- downloader
