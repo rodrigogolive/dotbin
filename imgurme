@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Parse and download images from an ImgUr gallery."""
 
 # the gallery that inspired me to create this script:
 # https://imgur.com/gallery/SwhjO
@@ -10,6 +11,11 @@ import sys
 from urllib2 import urlopen
 from HTMLParser import HTMLParser
 from argparse import ArgumentParser
+
+__author__ = "Rodrigo Oliveira"
+__version__ = "1.0.0"
+__maintainer__ = "Rodrigo Oliveira"
+__email__ = "rodrigo@deadbodyoutline.com"
 
 
 class Arguments():
@@ -66,11 +72,17 @@ class ImgUrParser(HTMLParser):
 
     def _validate_url(self, url):
         regex = ur'http[s]?://(?:w{3}\.)?imgur.com/(?:[a-zA-Z]|[0-9]|[$-_@.&+]\
-                |[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))*'
+                |[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))*'  # neat
 
         return re.match(regex, url)
 
     def _validate_image(self, image):
+        """Check if parsed image name has one of the supported extensions
+
+        Currently supporting JPG and PNG. Do ImgUr support any other?
+
+        :param image: the image string to validate
+        """
         regex = ur'.*(?:.png|.jpg)$'
 
         return re.match(regex, image)
@@ -78,7 +90,6 @@ class ImgUrParser(HTMLParser):
     def parse(self, url):
         p = PrintOut.instance()
 
-        # check if url is a valid ImgUr address
         if not self._validate_url(url):
             p.out("URL '%s' doesn't seems to be a valid ImgUr address" % url)
             return
@@ -134,7 +145,6 @@ class Downloader():
 
         if not os.path.exists(self._path):
             p.out("> Path '%s' doesn't exist" % self._path)
-
             return
 
         if not os.path.exists(self._download_path):
