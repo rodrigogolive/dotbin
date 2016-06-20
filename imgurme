@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 """Parse and download images from an Imgur gallery.
 
 The creation of this script was inspired by Methos25's rice [1]. I loved the
@@ -9,7 +9,9 @@ and randomly pick one to set as wallpaper.
 Well, this script do the first part, following the KISS philosophy. The second
 part will be done later on.
 
-Thanks to Baba_Puh, for pointing me out the correct spell of Imgur :p
+Thanks to:
+    - Baba_Puh, for pointing me out the correct spell of Imgur :p
+    - ecterovachor, for suggesting using the python version on the bang line
 
 [1] https://www.reddit.com/r/unixporn/comments/4mtww2/i3gaps_a_little_materialistic/  # noqa
 [2] https://imgur.com/gallery/SwhjO
