@@ -1,0 +1,51 @@
+#!/bin/sh
+################################################################################
+# This script was created by: MDK - mdk@thecoreme.org                          #
+# http://projects.thecoreme.org/                                               #
+# Jul 11 2016                                                                  #
+# Last update on Jul 11 2016                                                   #
+#                                                                              #
+# Simple script to get information from shipping from Correios                 #
+#                                                                              #
+# Depends on: w3m or lynx to display info                                      #
+################################################################################
+
+# setting up
+SEPARATOR=" ─────────────────────────────────────────────────────────────────────────────"
+URL="http://websro.correios.com.br/sro_bin/txect01%24.QueryList?P_LINGUA=001&P_TIPO=001&P_COD_UNI="
+
+W3M="w3m -T text/html -dump -I latin1 -O utf-8"
+LYNX="lynx -dump -nolist -assume_charset=latin1 -display_charset=utf-8 -stdin"
+CMD=$W3M
+
+exists=`which w3m &> /dev/null; echo $?`
+# w3m not found, try lynx
+if [[ $exists != 0 ]]
+then
+    exists=`which lynx &> /dev/null; echo $?`
+
+    # lynx not found, fail
+    if [[ $exists == 0 ]]
+    then
+        CMD=$LYNX
+    else
+        echo "w3m nor lynx were found! Install one of them to be able to run this script"
+        exit
+    fi
+fi
+
+# run this thing
+for cod in "$@"
+do
+    ret=`curl -sS $URL$cod | sed -n "/<table/,/<\/table>/Ip"`
+    out=$ret
+
+    # check if we have some useful info
+    if [ -z "$ret" ]
+    then
+        out="Wrong tracking code or no information right now"
+    fi
+
+    echo "$SEPARATOR"
+    echo "<center>$cod</center>" $out | $CMD
+done
