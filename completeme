@@ -16,6 +16,12 @@ YCM_FILE="ycm_extra_conf.py"
 # 'compilation_database_folder' thing...
 YCM_PATH="$HOME/.extras/"
 
+if [ ! -f "$YCM_PATH/$YCM_FILE" ]
+then
+    echo "Can not find '$YCM_FILE', exiting..."
+    exit
+fi
+
 if [ -z $1 ]
 then
     BUILD_DIR="."
