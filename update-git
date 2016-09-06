@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 ###############################################################
 # This script was created by: MDK - mdk@thecoreme.org         #
 # http://projects.thecoreme.org/                              #
@@ -15,11 +15,11 @@ echo "Updating git repositories..."
 for each in `ls -d */ -1`
 do
     cd $each
-        echo "\n\t - $each"
+        echo -e "\n\t - $each"
         git rev-parse HEAD
         git remote update && git pull --rebase --prune
         git submodule update --init
     cd $WORKDIR
 done
 
-echo "\ngit repos are updated now"
+echo -e "\ngit repos are updated now"
