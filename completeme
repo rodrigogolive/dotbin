@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+################################################################################
+# This script was created by: MDK - mdk@thecoreme.org                          #
+# http://projects.thecoreme.org/                                               #
+# Mar 28 2013                                                                  #
+# Last update on Sep 06 2016                                                   #
+#                                                                              #
+# Simple script to adjust ycm_extra_conf.py using a compilation database       #
+################################################################################
+
+BUILD_DIR=""
+COMPILATION_DATABASE_FILE="compile_commands.json"
+YCM_FILE="ycm_extra_conf.py"
+# https://raw.githubusercontent.com/Valloric/ycmd/master/cpp/ycm/.ycm_extra_conf.py
+# XXX should tailor the file to provide a minimal version? I just need the
+# 'compilation_database_folder' thing...
+YCM_PATH="$HOME/.extras/"
+
+if [ -z $1 ]
+then
+    BUILD_DIR="."
+else
+    BUILD_DIR="$1"
+fi
+
+if [ ! -f "$BUILD_DIR/$COMPILATION_DATABASE_FILE" ]
+then
+    echo "WARNING! It's advised to compile your code before opening the project on vim, or YouCompleteMe could fail at the first time"
+    touch "$BUILD_DIR/$COMPILATION_DATABASE_FILE"
+fi
+
+if [ -f ".$YCM_FILE" ]
+then
+    rm ".$YCM_FILE"
+fi
+
+cp "$YCM_PATH/$YCM_FILE" ".$YCM_FILE"
+sed -i "s/compilation_database_folder = ''/compilation_database_folder = '$BUILD_DIR'/" .$YCM_FILE
+
+echo "Done. Now you can add '$BUILD_DIR/$COMPILATION_DATABASE_FILE' and '.$YCM_FILE' to your .gitignore file"
