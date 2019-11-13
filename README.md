@@ -12,7 +12,8 @@ scripts
 * **imgurme**: Parse and download images from an Imgur gallery url;
 * **curreios**: Check [Correrios](http://websro.correios.com.br/sro_bin/txect01$.startup?P_LINGUA=001&P_TIPO=001) shipments;
 * **update-git**: Update git repositories found on the current directory (with its submodules).
+* **show-ansi-colors.sh**: Display current terminal colors. Based on [this script](https://gist.github.com/eliranmal/b373abbe1c21e991b394bdffb0c8a6cf).
 
 dotfiles
 --------
-You can take a look on them on my [dotfiles repo](https://github.com/rodrigogolive/dotfiles) ;)
+You can take a look on them on my [dotfiles repo](https://github.com/mdkcore0/dotfiles) ;)
