@@ -1,9 +1,9 @@
 #!/bin/sh
 ################################################################################
-# This script was created by: MDK - mdk@thecoreme.org                          #
-# http://projects.thecoreme.org/                                               #
+# This script was created by: MDK - mdkcore@qtrnn.io                           #
+# https://qtrnn.io                                                             #
 # Jul 11 2016                                                                  #
-# Last update on Jul 11 2016                                                   #
+# Last update on Aug 20 2010                                                   #
 #                                                                              #
 # Simple script to get information from shipping from Correios                 #
 #                                                                              #
@@ -12,7 +12,7 @@
 
 # setting up
 SEPARATOR=" ─────────────────────────────────────────────────────────────────────────────"
-URL="http://websro.correios.com.br/sro_bin/txect01%24.QueryList?P_LINGUA=001&P_TIPO=001&P_COD_UNI="
+URL="https://www.websro.com.br/detalhes.php?P_COD_UNI="
 
 W3M="w3m -T text/html -dump -I latin1 -O utf-8"
 LYNX="lynx -dump -nolist -assume_charset=latin1 -display_charset=utf-8 -stdin"
