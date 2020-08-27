@@ -1,0 +1,38 @@
+#!/bin/sh
+
+action=${1:-hybrid}
+delay=3
+
+command='pm-suspend-hybrid'
+case $action in
+    hybrid)
+        ;;
+    suspend)
+        command='pm-suspend'
+        ;;
+    hibernate)
+        command='pm-hibernate'
+        ;;
+    lock-only)
+        command=''
+        ;;
+    *)
+        echo "action '$action' not recognized; just locking and clearing"
+        command=''
+        ;;
+esac
+
+for pid in $(pgrep Xorg)
+do
+    display=$(ps -o command= -p "$pid"| awk '{print $2}')
+done
+DISPLAY=$display xlock -mode blank&
+
+# clear cached gpg password
+echo RELOADAGENT | gpg-connect-agent
+
+if [ -n "$command" ]
+then
+    sleep $delay
+    sudo "$command"
+fi
