@@ -27,12 +27,43 @@ improvements on them.
     ```shell
     $ power <suspend|hibernate|hybrid|lock-only>
     ```
-    This script clears cached gpg passwords when called. If ran without
+
+    This script clears cached GPG passwords when called. If ran without
     arguments, will hybrid-suspend the system.
+
     Also, can be used as an *acpi event* handler (/etc/acpi/event/lid):
     ```shell
     event=button/lid LID close
     action=su "$(ps aux | grep xinit | grep -v grep | awk '{print $1}')" -c "power lock-only"
+    ```
+
+- **pinentry-auto**: show `pinentry-curses` or `pinentry-qt` if requiring GPG
+  password from a terminal emulator of from a GUI application. Based on [this
+  script](https://kevinlocke.name/bits/2019/07/31/prefer-terminal-for-gpg-pinentry/).
+
+    Usage:
+
+    Configure your **pinentry-program** entry to `pinentry-auto` and set
+    *USE_CURSES=1* on the *PINENTRY_USER_DATA* environment variable on your
+    shell.
+    ```shell
+    $ cat ~/.gnupg/gpg-agent.conf
+    ...
+    pinentry-program /home/mdk/.bin/pinentry-auto
+    ...
+    $ cat ~/.profile
+    ...
+    export PINENTRY_USER_DATA="USE_CURSES=1"
+    ...
+    ```
+
+    **Note**: If starting X from command line (runlevel 3; e.g.: `startx`),
+    just unset *PINENTRY_USER_DATA*:
+    ```shell
+    $ cat ~/.xinitrc
+    ...
+    unset PINENTRY_USER_DATA
+    ...
     ```
 
 ## dotfiles

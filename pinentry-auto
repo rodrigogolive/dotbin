@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# choose between pinentry-curses and pinentry-qt based on whether
+# $PINENTRY_USER_DATA contains USE_CURSES=1
+#
+# based on:
+# https://kevinlocke.name/bits/2019/07/31/prefer-terminal-for-gpg-pinentry/
+
+set -Ceu
+
+# use pinentry-tty if $PINENTRY_USER_DATA contains USE_CURSES=1
+# NOTE: unset PINENTRY_USER_DATA if starting X from command line (startx)
+case "${PINENTRY_USER_DATA-}" in
+    *USE_CURSES=1*)
+        exec pinentry-curses "$@"
+        ;;
+esac
+
+# otherwise, use QT UI
+# note: will fallback to curses if $DISPLAY is not available.
+exec pinentry-qt "$@"
