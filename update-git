@@ -1,25 +1,30 @@
-#!/usr/bin/env bash
+#!/bin/sh
 ###############################################################
-# This script was created by: MDK - mdk@thecoreme.org         #
-# http://projects.thecoreme.org/                              #
+# This script was created by: MDK - mdk@qtrnn.io              #
+# https://qtrnn.io                                            #
 # Jul 10 2013                                                 #
-# Last update on Aug 11 2016                                  #
+# Last update on Oct 20 2020                                  #
 #                                                             #
-# Simple script to update git repositories on the current dir #
+# Simple script to update git repositories (and its           #
+# submodules) on the current dir                              #
 ###############################################################
-
-WORKDIR=$PWD
-cd $WORKDIR
 
 echo "Updating git repositories..."
-for each in `ls -d */ -1`
+for each in ./*/
 do
-    cd $each
-        echo -e "\n\t - $each"
+    (
+        cd "$each" || exit
+        echo "- $(basename "$each")"
+
         git rev-parse HEAD
-        git remote update && git pull --rebase --prune
-        git submodule update --init
-    cd $WORKDIR
+        git remote update
+
+        git submodule update --init --recursive
+        git pull --rebase --prune --tags
+
+        echo
+    )
 done
 
-echo -e "\ngit repos are updated now"
+echo
+echo "git repositories are updated now"
