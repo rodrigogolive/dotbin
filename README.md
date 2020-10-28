@@ -36,4 +36,4 @@ improvements on them.
     ```
 
 ## dotfiles
-You can take a look on them on my [dotfiles repo](https://github.com/mdkcore0/dotfiles) ;)
+You can take a look on them on my [dotfiles repo](https://git.sr.ht/~mdkcore/dotfiles) ;)
