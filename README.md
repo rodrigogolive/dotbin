@@ -99,6 +99,24 @@ unset PINENTRY_USER_DATA
 ...
 ```
 
+## generate-colors.py && synchronize-colors.sh
+**files**: [generate-colors.py](generate-colors.py),
+[synchronize-colors.sh](synchronize-colors.sh)
+
+Generate application specific color theme based on a template and the current
+[base16 shell theme](https://github.com/chriskempson/base16-shell) in use, and
+syncronize them all across some applications, refreshing and reloading them.
+
+**Usage**:
+```shell
+$ base16_solarized-dark && synchronize-colors
+```
+
+`synchronize-colors.sh` will call `generate-colors.py`. They are tailored for
+my need, but suggestions and improvements are wellcome. See my [dotfiles](
+https://git.sr.ht/~mdkcore/dotfiles/commit/c0e752793a47a93df9e6f42448cbe4d2fd178d29)
+for a pratical example of the use.
+
 # dotfiles
 You can take a look on them on my [dotfiles repo](
 https://git.sr.ht/~mdkcore/dotfiles) ;)
